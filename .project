@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>HALClasses</name>
+	<name>MotorFirmware</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -24,16 +24,4 @@
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>utils/uartstdio.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/ti/TivaWare_C_Series-2.1.2.111/utils/uartstdio.c</locationURI>
-		</link>
-		<link>
-			<name>utils/uartstdio.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/ti/TivaWare_C_Series-2.1.2.111/utils/uartstdio.h</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>
