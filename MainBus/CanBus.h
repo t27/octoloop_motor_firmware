@@ -24,7 +24,7 @@ public:
 	CanBus();
 	virtual ~CanBus();
 	void registerInterrupt(void (*handler)());
-	void enableCan();
+	void enableCAN();
 	void sendData(unsigned int *message);
 
 private:

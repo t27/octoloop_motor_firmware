@@ -32,7 +32,7 @@ void CanBus::registerInterrupt(void (*handler)()) {
 	IntEnable(INT_CAN0);
 }
 
-void CanBus::enableCan() {
+void CanBus::enableCAN() {
 	CANEnable(CAN0_BASE);
 }
 
@@ -40,21 +40,15 @@ void CanBus:: sendData(unsigned int *message) {
 	//can message object
 	tCANMsgObject msg; // the CAN message object
 //	unsigned int msgData; // the message data is four bytes long which we can allocate as an int32
-	unsigned char *msgDataPtr = (unsigned char *)&message; // make a pointer to msgData so we can access individual bytes
+	uint8_t *msgDataPtr = (uint8_t *)message; // make a pointer to msgData so we can access individual bytes
 
 	//setup message object
 	msg.ui32MsgID = 1;
-	msg.ui32MsgIDMask = 1;
+	msg.ui32MsgIDMask = 0;
 	msg.ui32Flags = MSG_OBJ_TX_INT_ENABLE;
 	msg.ui32MsgLen = sizeof(msgDataPtr);
 	msg.pui8MsgData = msgDataPtr;
 
-
-	//can message data
-//	msgDataPtr[0] = 0xFF;
-//	msgDataPtr[1] = 0xFF;
-//	msgDataPtr[2] = 0xFE;
-//	msgDataPtr[3] = 0xFE;
 
     CANMessageSet(CAN0_BASE, 1, &msg, MSG_OBJ_TYPE_TX);
 }

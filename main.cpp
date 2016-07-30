@@ -34,10 +34,60 @@ void InitConsole(void) // Debug logging
     UARTStdioConfig(0, 115200, 16000000);
 }
 
-void canHandler() {
+volatile bool g_bErrFlag = 0;
+volatile uint32_t g_ui32MsgCount = 0;
 
+void canHandler(void) {
+	uint32_t ui32Status;
+	// Read the CAN interrupt status to find the cause of the interrupt
+	ui32Status = CANIntStatus(CAN0_BASE, CAN_INT_STS_CAUSE);
+	// If the cause is a controller status interrupt, then get the status
+	if(ui32Status == CAN_INT_INTID_STATUS)
+	{
+		// Read the controller status.  This will return a field of status
+		// error bits that can indicate various errors.  Error processing
+		// is not done in this example for simplicity.  Refer to the
+		// API documentation for details about the error status bits.
+		// The act of reading this status will clear the interrupt.  If the
+		// CAN peripheral is not connected to a CAN bus with other CAN devices
+		// present, then errors will occur and will be indicated in the
+		// controller status.
+		ui32Status = CANStatusGet(CAN0_BASE, CAN_STS_CONTROL);
+
+		// Set a flag to indicate some errors may have occurred.
+		g_bErrFlag = 1;
+	}
+	// Check if the cause is message object 1, which what we are using for
+	// sending messages.
+	else if(ui32Status == 1)
+	{
+		// Getting to this point means that the TX interrupt occurred on
+		// message object 1, and the message TX is complete.  Clear the
+		// message object interrupt.
+		CANIntClear(CAN0_BASE, 1);
+		// Increment a counter to keep track of how many messages have been
+		// sent.  In a real application this could be used to set flags to
+		// indicate when a message is sent.
+		g_ui32MsgCount++;
+
+		// Since the message was sent, clear any error flags.
+		g_bErrFlag = 0;
+	}
+	// Otherwise, something unexpected caused the interrupt.  This should
+	// never happen.
+	else
+	{
+		// Spurious interrupt handling can go here.
+	}
 }
-
+void
+SimpleDelay(void)
+{
+    //
+    // Delay cycles for 1 second
+    //
+    SysCtlDelay(80000000 / 3);
+}
 
 int main(void) {
 	SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
@@ -101,13 +151,14 @@ int main(void) {
 	/* CAN Test Code */
 	CanBus *cb = new CanBus();
 
-	cb -> enableCan();
+	cb -> enableCAN();
 	cb -> registerInterrupt(canHandler);
 	uint32_t data = 1;
 
 	while(1) {
 		data ++;
 		cb -> sendData(&data);
+		SimpleDelay();
 	}
 	return 0;
 }
