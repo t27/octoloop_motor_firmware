@@ -1,0 +1,1 @@
+"./AMSPositionEncoder.obj" "./PositionEncoder.obj" "./main.obj" "./tm4c123gh6pz_startup_ccs.obj" "../tm4c123gh6pz.cmd" -l"libc.a" 
