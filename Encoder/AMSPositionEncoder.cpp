@@ -15,21 +15,21 @@ AMSPositionEncoder::~AMSPositionEncoder() {
 	// TODO Auto-generated destructor stub
 }
 
-int AMSPositionEncoder::getPosition() {
-	int positionMSB = I2CReceive(CHIP_ADDR, POSITION_ADDR);
-	int positionLSB = I2CReceive(CHIP_ADDR, POSITION_ADDR + 1);
+uint16_t AMSPositionEncoder::getPosition() {
+	uint16_t positionMSB = I2CReceive(CHIP_ADDR, POSITION_ADDR);
+	uint16_t positionLSB = I2CReceive(CHIP_ADDR, POSITION_ADDR + 1);
 
-	int position = (positionMSB<<8) + positionLSB;
+	uint16_t position = (positionMSB<<8) + positionLSB;
 
 //	long position = I2CReceive2Bytes(CHIP_ADDR, POSITION_ADDR);
 	return position;
 }
 
-int AMSPositionEncoder::readZeroPos() {
-	int positionMSB = I2CReceive(CHIP_ADDR, ZERO_ADDR);
-	int positionLSB = I2CReceive(CHIP_ADDR, ZERO_ADDR + 1);
+uint16_t AMSPositionEncoder::readZeroPos() {
+	uint16_t positionMSB = I2CReceive(CHIP_ADDR, ZERO_ADDR);
+	uint16_t positionLSB = I2CReceive(CHIP_ADDR, ZERO_ADDR + 1);
 
-	int position = (positionMSB<<8) + positionLSB;
+	uint16_t position = (positionMSB<<8) + positionLSB;
 
 	return position;
 }

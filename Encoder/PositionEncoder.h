@@ -8,12 +8,14 @@
 #ifndef POSITIONENCODER_H_
 #define POSITIONENCODER_H_
 
+#include <stdint.h>
+
 class PositionEncoder {
 public:
 	PositionEncoder();
 	virtual ~PositionEncoder();
 
-	virtual int getPosition() = 0;
+	virtual uint16_t getPosition() = 0;
 };
 
 #endif /* POSITIONENCODER_H_ */
