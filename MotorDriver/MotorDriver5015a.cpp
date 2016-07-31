@@ -11,8 +11,6 @@
  * For a 1kHz frequency pulse
  */
 
-#define PWM_PERIOD 1250 //In clock ticks
-
 MotorDriver5015a::MotorDriver5015a() {
 	// TODO Auto-generated constructor stub
 
@@ -65,11 +63,16 @@ MotorDriver5015a::~MotorDriver5015a() {
 	// TODO Auto-generated destructor stub
 }
 
-// Value is a fraction between 0 and 1
+// Value is a fraction between 0 and 100
 void MotorDriver5015a::setSpeed(float val) {
 	//Write 1Khz PWM and Change duty cycle
+	if (val < 0) {
+		val = 0;
+	} else if (val > 100) {
+		val = 100;
+	}
 	currentSpeed = val;
-	PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, (int)(val * (float)PWM_PERIOD));
+	PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, (int)((val/PWM_INPUT_MAX) * (float)PWM_PERIOD));
 }
 
 double MotorDriver5015a::getSpeed() {

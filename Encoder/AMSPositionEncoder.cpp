@@ -15,21 +15,21 @@ AMSPositionEncoder::~AMSPositionEncoder() {
 	// TODO Auto-generated destructor stub
 }
 
-long AMSPositionEncoder::getPosition() {
-	long positionMSB = I2CReceive(CHIP_ADDR, POSITION_ADDR);
-	long positionLSB = I2CReceive(CHIP_ADDR, POSITION_ADDR + 1);
+int AMSPositionEncoder::getPosition() {
+	int positionMSB = I2CReceive(CHIP_ADDR, POSITION_ADDR);
+	int positionLSB = I2CReceive(CHIP_ADDR, POSITION_ADDR + 1);
 
-	long position = (positionMSB<<8) + positionLSB;
+	int position = (positionMSB<<8) + positionLSB;
 
 //	long position = I2CReceive2Bytes(CHIP_ADDR, POSITION_ADDR);
 	return position;
 }
 
-long AMSPositionEncoder::readZeroPos() {
-	long positionMSB = I2CReceive(CHIP_ADDR, ZERO_ADDR);
-	long positionLSB = I2CReceive(CHIP_ADDR, ZERO_ADDR + 1);
+int AMSPositionEncoder::readZeroPos() {
+	int positionMSB = I2CReceive(CHIP_ADDR, ZERO_ADDR);
+	int positionLSB = I2CReceive(CHIP_ADDR, ZERO_ADDR + 1);
 
-	long position = (positionMSB<<8) + positionLSB;
+	int position = (positionMSB<<8) + positionLSB;
 
 	return position;
 }
@@ -50,8 +50,6 @@ void AMSPositionEncoder::InitI2C0(void) {
     // Configure the pin muxing for I2C0 functions on port B2 and B3.
     GPIOPinConfigure(GPIO_PB2_I2C0SCL);
     GPIOPinConfigure(GPIO_PB3_I2C0SDA);
-
-
 
     // Enable and initialize the I2C0 master module.  Use the system clock for
     // the I2C0 module.  The last parameter sets the I2C data transfer rate.

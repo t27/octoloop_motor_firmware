@@ -13,7 +13,7 @@ public:
 	PositionEncoder();
 	virtual ~PositionEncoder();
 
-	virtual long getPosition() = 0;
+	virtual int getPosition() = 0;
 };
 
 #endif /* POSITIONENCODER_H_ */

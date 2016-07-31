@@ -28,8 +28,8 @@ public:
 	AMSPositionEncoder();
 	virtual ~AMSPositionEncoder();
 
-	long getPosition();
-	long readZeroPos();
+	int getPosition();
+	int readZeroPos();
 
 private:
 	static const uint8_t CHIP_ADDR = 0x40;
