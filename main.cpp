@@ -1,21 +1,7 @@
 /*
  * main.c
  */
-#include <stdio.h>
-
-#include "Encoder/AMSPositionEncoder.h"
-#include "ForceSensor/CurrentForceSensor.h"
-#include "MotorDriver/MotorDriver5015a.h"
-#include "MainBus/CanBus.h"
-
-#include <string.h>
-#include "inc/hw_uart.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/uart.h"
-#include "utils/uartstdio.h"
-#include "driverlib/systick.h"
+#include "commondef.h"
 
 void InitConsole(void) // Debug logging
 {

@@ -8,11 +8,9 @@
 #ifndef _PID_SOURCE_
 #define _PID_SOURCE_
 
-#include <iostream>
-#include <cmath>
+
 #include "pid.h"
 
-using namespace std;
 
 PID::PID( double dt, double max, double min, double Kp, double Kd, double Ki ) :
     _dt(dt),
