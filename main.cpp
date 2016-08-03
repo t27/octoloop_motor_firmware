@@ -90,25 +90,25 @@ int main(void)
 	PID cPID(1, 100, 0, 5, 2.5, 1);
 	MotorDriver5015a cMotorDriver5015a;
 
-	uint16_t currentPostion;
-	uint16_t targetPosition;
+	uint16_t current_postion;
+	uint16_t target_position;
 	double speed;
 
 	/*** Read the current position from the encoder and udpate the params class ***/
-	currentPostion = cAMSPositionEncoder.getPosition();
-	cParams.setCurrentPos(currentPostion);
+	current_postion = cAMSPositionEncoder.getPosition();
+	cParams.setCurrentPos(current_postion);
 #ifdef DEBUG
-	UARTprintf("Current Position: %d",currentPostion);
+	UARTprintf("Current Position: %d",current_postion);
 #endif
 
 	/*** Read the target position from the Params class ***/
-	targetPosition = cParams.getTargetPos();
+	target_position = cParams.getTargetPos();
 #ifdef DEBUG
-	UARTprintf("Target Position: %d", targetPosition);
+	UARTprintf("Target Position: %d", target_position);
 #endif
 
 	/*** Call PID class main function and get PWM speed as the output ***/
-	speed = cPID.calculate(targetPosition, currentPostion);
+	speed = cPID.calculate(target_position, current_postion);
 	//	- Send the pwm speed to the motor
 
 	if(speed < 0)

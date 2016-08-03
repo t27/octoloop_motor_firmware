@@ -38,7 +38,7 @@ public:
 	void enableMotor();
 	void disableMotor();
 private:
-	double currentSpeed;
+	double current_speed;
 	Direction currentDirection;
 };
 

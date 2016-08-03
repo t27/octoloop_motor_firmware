@@ -15,7 +15,7 @@ MotorDriver5015a::MotorDriver5015a() {
 	// TODO Auto-generated constructor stub
 
 	// Init PWM and GPIO for direction out, brake, speed read etc
-	currentSpeed = 0;
+	current_speed = 0;
 	currentDirection = CLOCKWISE;
 
 	/* Initialise PWM */
@@ -56,7 +56,7 @@ MotorDriver5015a::MotorDriver5015a() {
 	GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5);
 
 	setDirection(currentDirection);
-	setSpeed(currentSpeed);
+	setSpeed(current_speed);
 }
 
 MotorDriver5015a::~MotorDriver5015a() {
@@ -71,13 +71,13 @@ void MotorDriver5015a::setSpeed(float val) {
 	} else if (val > 100) {
 		val = 100;
 	}
-	currentSpeed = val;
+	current_speed = val;
 	PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, (int)((val/PWM_INPUT_MAX) * (float)PWM_PERIOD));
 }
 
 double MotorDriver5015a::getSpeed() {
 	// TODO:Read PWM input from SpeedInput pin
-	return currentSpeed;
+	return current_speed;
 }
 
 void MotorDriver5015a::setDirection(Direction dir) {

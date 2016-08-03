@@ -13,9 +13,9 @@
 class Params
 {
 private:
-	uint8_t id; // hex from 0x00 to 0x05
-	uint16_t currentPos; //0-16383
-	uint16_t targetPos; //0-16383
+	uint8_t id_; // hex from 0x00 to 0x05
+	uint16_t current_position_; //0-16383
+	uint16_t target_position_; //0-16383
 public:
 
 	void setId(uint8_t);

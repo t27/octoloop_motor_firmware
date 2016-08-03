@@ -37,7 +37,6 @@ Programing Style Guide
 #include <stdio.h>
 #include <stdint.h>
 
-#include "Params/Params.h"
 #include "PID/pid.h"
 
 
@@ -52,6 +51,7 @@ Programing Style Guide
 #include "ForceSensor/current_force_sensor.h"
 #include "MainBus/can_bus.h"
 #include "MotorDriver/motor_driver_5015a.h"
+#include "Params/params.h"
 
 #define DEBUG
 
