@@ -17,13 +17,12 @@ private:
 	uint16_t currentPos; //0-16383
 	uint16_t targetPos; //0-16383
 public:
-	Params();
-	~Params();
-	bool setId();
+
+	void setId(uint8_t);
 	uint8_t getId();
-	bool setCurrentPos(); //returns true if set
+	void setCurrentPos(uint16_t); //returns true if set
 	uint16_t getCurrentPos();
-	bool setTargetPos(); //returns true if set
+	void setTargetPos(uint16_t); //returns true if set
 	uint16_t getTargetPos();
 };
 
