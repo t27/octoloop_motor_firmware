@@ -11,6 +11,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include "a_force_sensor.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
 #include "inc/hw_gpio.h"
@@ -19,7 +20,6 @@
 #include "driverlib/adc.h"
 #include "driverlib/gpio.h"
 
-#include "ForceSensor.h"
 
 class CurrentForceSensor: public ForceSensor {
 public:

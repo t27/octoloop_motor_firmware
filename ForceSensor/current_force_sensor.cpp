@@ -5,7 +5,7 @@
  *      Author: Tarang
  */
 
-#include "CurrentForceSensor.h"
+#include "current_force_sensor.h"
 
 CurrentForceSensor::CurrentForceSensor() {
 	// TODO Auto-generated constructor stub

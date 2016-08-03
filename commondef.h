@@ -15,17 +15,17 @@ Programing Style Guide
 
  /*
  - Names should be descriptive, no non-standard abbreviations, we have auto complete (PWM, PID is allowed)
- - Variable Names: under_score, all small with underscores
+ - Variable Names: under_scored, all small with underscores
  - Class Names: CamelCasing again, start with capital letter
- - File Names: no_camel_casing, start with small letter, use underscore, class FooBar will have name foo_bar.cpp and foo_bar.h
+ - File Names: under_scored, start with small letter, use underscore, class FooBar will have name foo_bar.cpp and foo_bar.h
  - File Names: if a file has abstract preceed the name of the file with a_
  - Class Instance: leading 'c', FooBar cFooBar. in case of multiple instances, specify a differentiator later with underscore
  - Class data members/variables: have a trailing underscore
  - Function Names: camelCasing, start with small letters
  - Macro Names: All caps #define MACRO
  - All header files to include the usage guide of the functions present in them, abstract classes in our case
- - TODO: if any to be mentioned on top of the header file, CCS catches them all if required later
- - All printing statemenets inside #ifdef DEBUG
+ - All TODOs, if any to be mentioned on top of the header file, CCS catches them all if required later
+ - All printing statements inside #ifdef DEBUG
  - Only the following type of int data types in the code, no generic terms:
  		 int8_t		uint8_t  (0 to 255)								byte
 		 int16_t	uint16_t (0 to 65,535)							short
@@ -37,10 +37,6 @@ Programing Style Guide
 #include <stdio.h>
 #include <stdint.h>
 
-#include "Encoder/AMSPositionEncoder.h"
-#include "ForceSensor/CurrentForceSensor.h"
-#include "MotorDriver/MotorDriver5015a.h"
-#include "MainBus/CanBus.h"
 #include "Params/Params.h"
 #include "PID/pid.h"
 
@@ -52,11 +48,12 @@ Programing Style Guide
 #include "driverlib/uart.h"
 #include "utils/uartstdio.h"
 #include "driverlib/systick.h"
+#include "Encoder/ams_position_encoder.h"
+#include "ForceSensor/current_force_sensor.h"
+#include "MainBus/can_bus.h"
+#include "MotorDriver/motor_driver_5015a.h"
 
 #define DEBUG
-
-
-
 
 
 #endif /* COMMONDEF_H_ */

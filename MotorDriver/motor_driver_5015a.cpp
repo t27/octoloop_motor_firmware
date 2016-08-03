@@ -5,7 +5,7 @@
  *      Author: Tarang
  */
 
-#include "MotorDriver5015a.h"
+#include "motor_driver_5015a.h"
 
 /*
  * For a 1kHz frequency pulse

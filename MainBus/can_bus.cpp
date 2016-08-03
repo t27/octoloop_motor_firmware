@@ -5,7 +5,7 @@
  *      Author: Tarang
  */
 
-#include "CanBus.h"
+#include "can_bus.h"
 
 CanBus::CanBus() {
 	initCAN();

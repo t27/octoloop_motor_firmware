@@ -5,7 +5,7 @@
  *      Author: Tarang
  */
 
-#include "PositionEncoder.h"
+#include "a_position_encoder.h"
 
 PositionEncoder::PositionEncoder() {
 	// TODO Auto-generated constructor stub

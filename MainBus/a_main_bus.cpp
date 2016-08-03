@@ -5,7 +5,7 @@
  *      Author: Tarang
  */
 
-#include "MainBus.h"
+#include "a_main_bus.h"
 
 MainBus::MainBus() {
 	// TODO Auto-generated constructor stub

@@ -5,7 +5,7 @@
  *      Author: Tarang
  */
 
-#include "ForceSensor.h"
+#include "a_force_sensor.h"
 
 ForceSensor::ForceSensor() {
 	// TODO Auto-generated constructor stub

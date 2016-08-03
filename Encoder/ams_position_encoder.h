@@ -11,6 +11,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include "a_position_encoder.h"
 #include "inc/hw_i2c.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -20,7 +21,6 @@
 #include "driverlib/gpio.h"
 #include "driverlib/pin_map.h"
 
-#include "PositionEncoder.h"
 
 class AMSPositionEncoder: public PositionEncoder {
 public:

@@ -4,7 +4,7 @@
  *  Created on: 23-Jul-2016
  *      Author: Tarang
  */
-#include "AMSPositionEncoder.h"
+#include "ams_position_encoder.h"
 
 AMSPositionEncoder::AMSPositionEncoder() {
 	// TODO Auto-generated constructor stub
