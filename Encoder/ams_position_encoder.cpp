@@ -57,7 +57,7 @@ void AMSPositionEncoder::InitI2C3(void) {
     // the I2C3 module.  The last parameter sets the I2C data transfer rate.
     // If false the data rate is set to 100kbps and if true the data rate will
     // be set to 400kbps.
-    I2CMasterInitExpClk(I2C3_BASE, SysCtlClockGet(), true);
+    I2CMasterInitExpClk(I2C3_BASE, SysCtlClockGet(), false);
 
     //clear I2C FIFOs
     HWREG(I2C3_BASE + I2C_O_FIFOCTL) = 80008000;

@@ -78,47 +78,56 @@ SimpleDelay(void)
 int main(void)
 {
 	SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); //80 Mhz clock cycle
-
 #ifdef DEBUG	// Set up the serial console to use for displaying messages
 	InitConsole();
-	UARTprintf("Test");
+	printf("Hello there!\n");
 #endif
 
 
 	/*** Init classes, variables ***/
 	AMSPositionEncoder cAMSPositionEncoder;
 	Params cParams;
-//	PID cPID(1, 100, 0, 5, 2.5, 1);
-//	MotorDriver5015a cMotorDriver5015a;
+	PID cPID(1, 100, -100, 0.0061, 2.5, 1);
+	MotorDriver5015a cMotorDriver5015a;
 
 	uint32_t current_position;
-//	uint16_t target_position;
-//	double speed;
+	uint16_t target_position = 14139;
+	float speed;
 
 	while(1) {
 
 		/*** Read the current position from the encoder and udpate the params class ***/
 		current_position = cAMSPositionEncoder.getPosition();
 		cParams.setCurrentPos(current_position);
-	#ifdef DEBUG
-		UARTprintf("%d\n",current_position);
-	#endif
+#ifdef DEBUG
+		//		UARTprintf("Current Position: %d\n",current_position);
+		printf("Current Position: %d\n",current_position);
+#endif
 
-	//	/*** Read the target position from the Params class ***/
-	//	target_position = cParams.getTargetPos();
-	//#ifdef DEBUG
-	//	UARTprintf("Target Position: %d", target_position);
-	//#endif
-	//
-	//	/*** Call PID class main function and get PWM speed as the output ***/
-	//	speed = cPID.calculate(target_position, current_postion);
-	//	//	- Send the pwm speed to the motor
-	//
-	//	if(speed < 0)
-	//		cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
-	//	else
-	//		cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
-	//	cMotorDriver5015a.setSpeed(speed);
+		//	/*** Read the target position from the Params class ***/
+		//		target_position = cParams.getTargetPos();
+#ifdef DEBUG
+		//UARTprintf("Target Position: %d\n", target_position);
+		printf("Target Position: %d\n", target_position);
+#endif
+
+		/*** Call PID class main function and get PWM speed as the output ***/
+		speed = cPID.calculate(target_position, current_position);
+#ifdef DEBUG
+//		UARTprintf("Speed: %d\n", (int)speed);
+		printf("Speed: %.4f\n", speed);
+#endif
+		//		speed+=5;
+		//		if (speed >100) {
+		//			speed = 1;
+		//		}
+		//	- Send the pwm speed to the motor
+
+		if(speed < 0)
+			cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
+		else
+			cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
+		cMotorDriver5015a.setSpeed(fabsf(speed));
 	}
 	return 0;
 }

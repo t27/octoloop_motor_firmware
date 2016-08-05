@@ -36,9 +36,7 @@ Programing Style Guide
 
 #include <stdio.h>
 #include <stdint.h>
-
-#include "PID/pid.h"
-
+#include <math.h>
 
 #include "inc/hw_uart.h"
 #include "driverlib/rom.h"
@@ -47,11 +45,13 @@ Programing Style Guide
 #include "driverlib/uart.h"
 #include "utils/uartstdio.h"
 #include "driverlib/systick.h"
+
 #include "Encoder/ams_position_encoder.h"
 #include "ForceSensor/current_force_sensor.h"
 #include "MainBus/can_bus.h"
 #include "MotorDriver/motor_driver_5015a.h"
 #include "Params/params.h"
+#include "PID/pid.h"
 
 #define DEBUG
 

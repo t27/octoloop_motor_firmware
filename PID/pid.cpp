@@ -42,7 +42,8 @@ double PID::calculate( double setpoint, double pv )
     double Dout = Kd_ * derivative;
 
     // Calculate total output
-    double output = Pout + Iout + Dout;
+//    double output = Pout + Iout + Dout;
+    double output = Pout;
 
     // Restrict to max/min
     if( output > max_ )
