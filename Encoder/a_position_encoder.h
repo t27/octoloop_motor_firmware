@@ -15,7 +15,7 @@ public:
 	PositionEncoder();
 	virtual ~PositionEncoder();
 
-	virtual uint16_t getPosition() = 0;
+	virtual uint32_t getPosition() = 0;
 };
 
 #endif /* POSITIONENCODER_H_ */

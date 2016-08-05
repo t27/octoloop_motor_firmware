@@ -28,14 +28,14 @@ public:
 	AMSPositionEncoder();
 	virtual ~AMSPositionEncoder();
 
-	uint16_t getPosition();
+	uint32_t getPosition();
 	uint16_t readZeroPos();
 
 private:
 	static const uint8_t CHIP_ADDR = 0x40;
 	static const uint8_t POSITION_ADDR = 0xFE;
 	static const uint8_t ZERO_ADDR = 0x15;
-	void InitI2C0();
+	void InitI2C3();
 	uint32_t I2CReceive(uint32_t slave_addr, uint8_t reg);
 	uint32_t I2CReceive2Bytes(uint32_t slave_addr, uint8_t reg);
 	void I2CSend(uint8_t slave_addr, uint8_t num_of_args, ...);

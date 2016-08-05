@@ -84,39 +84,42 @@ int main(void)
 	UARTprintf("Test");
 #endif
 
+
 	/*** Init classes, variables ***/
 	AMSPositionEncoder cAMSPositionEncoder;
 	Params cParams;
-	PID cPID(1, 100, 0, 5, 2.5, 1);
-	MotorDriver5015a cMotorDriver5015a;
+//	PID cPID(1, 100, 0, 5, 2.5, 1);
+//	MotorDriver5015a cMotorDriver5015a;
 
-	uint16_t current_postion;
-	uint16_t target_position;
-	double speed;
+	uint32_t current_position;
+//	uint16_t target_position;
+//	double speed;
 
-	/*** Read the current position from the encoder and udpate the params class ***/
-	current_postion = cAMSPositionEncoder.getPosition();
-	cParams.setCurrentPos(current_postion);
-#ifdef DEBUG
-	UARTprintf("Current Position: %d",current_postion);
-#endif
+	while(1) {
 
-	/*** Read the target position from the Params class ***/
-	target_position = cParams.getTargetPos();
-#ifdef DEBUG
-	UARTprintf("Target Position: %d", target_position);
-#endif
+		/*** Read the current position from the encoder and udpate the params class ***/
+		current_position = cAMSPositionEncoder.getPosition();
+		cParams.setCurrentPos(current_position);
+	#ifdef DEBUG
+		UARTprintf("%d\n",current_position);
+	#endif
 
-	/*** Call PID class main function and get PWM speed as the output ***/
-	speed = cPID.calculate(target_position, current_postion);
-	//	- Send the pwm speed to the motor
-
-	if(speed < 0)
-		cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
-	else
-		cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
-	cMotorDriver5015a.setSpeed(speed);
-
+	//	/*** Read the target position from the Params class ***/
+	//	target_position = cParams.getTargetPos();
+	//#ifdef DEBUG
+	//	UARTprintf("Target Position: %d", target_position);
+	//#endif
+	//
+	//	/*** Call PID class main function and get PWM speed as the output ***/
+	//	speed = cPID.calculate(target_position, current_postion);
+	//	//	- Send the pwm speed to the motor
+	//
+	//	if(speed < 0)
+	//		cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
+	//	else
+	//		cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
+	//	cMotorDriver5015a.setSpeed(speed);
+	}
 	return 0;
 }
 
