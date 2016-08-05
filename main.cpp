@@ -115,7 +115,7 @@ int main(void)
 		speed = cPID.calculate(target_position, current_position);
 #ifdef DEBUG
 //		UARTprintf("Speed: %d\n", (int)speed);
-		printf("Speed: %.4f\n", speed);
+		printf("Speed: %d\n", (int)speed);
 #endif
 		//		speed+=5;
 		//		if (speed >100) {
