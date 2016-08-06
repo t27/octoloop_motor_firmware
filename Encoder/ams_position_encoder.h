@@ -5,6 +5,9 @@
  *      Author: Tarang
  */
 
+// TODO: Hard code the value of SysCtlClockGet(), to save the overheads of a function call.
+
+
 #ifndef AMSPOSITIONENCODER_H_
 #define AMSPOSITIONENCODER_H_
 
