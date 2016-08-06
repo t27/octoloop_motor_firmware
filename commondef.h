@@ -54,6 +54,7 @@ Programing Style Guide
 #include "PID/pid.h"
 
 #define DEBUG
+#define MAX_ENCODER_COUNT 16384 //0-16383
 
 
 #endif /* COMMONDEF_H_ */

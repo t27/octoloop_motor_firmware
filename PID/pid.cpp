@@ -29,6 +29,9 @@ double PID::calculate( double setpoint, double pv )
 
     // Calculate error
     double error = setpoint - pv;
+    if(error > MAX_ENCODER_COUNT/2)
+    	error = error - MAX_ENCODER_COUNT;
+
 
     // Proportional term
     double Pout = Kp_ * error;
