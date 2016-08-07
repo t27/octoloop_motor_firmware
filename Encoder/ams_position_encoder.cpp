@@ -19,7 +19,7 @@ uint32_t AMSPositionEncoder::getPosition() {
 
 	uint32_t position = ((positionMSB & 0x3F)<<8) + positionLSB;
 
-	//	long position = I2CReceive2Bytes(CHIP_ADDR, POSITION_ADDR);
+//	uint32_t position = I2CReceive2Bytes(CHIP_ADDR, POSITION_ADDR);
 	return position;
 }
 
@@ -35,6 +35,15 @@ void AMSPositionEncoder::InitI2C3(void) {
 
 	//enable peripheral clocks
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_I2C3);
+
+	//reset module
+	SysCtlPeripheralReset(SYSCTL_PERIPH_I2C0);
+
+	//wait for the I2C3 module to be ready
+	while(!SysCtlPeripheralReady(SYSCTL_PERIPH_I2C3))
+	{
+
+	}
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
 
 	//Enable pin PD1 for I2C3 I2C3SDA
@@ -52,7 +61,7 @@ void AMSPositionEncoder::InitI2C3(void) {
 	I2CMasterInitExpClk(I2C3_BASE, SysCtlClockGet(), false);
 
 	//clear I2C FIFOs
-	HWREG(I2C3_BASE + I2C_O_FIFOCTL) = 80008000;
+//	HWREG(I2C3_BASE + I2C_O_FIFOCTL) = 80008000;
 }
 
 //read specified register on slave device
@@ -68,8 +77,17 @@ uint32_t AMSPositionEncoder::I2CReceive(uint32_t slave_addr, uint8_t reg)
 	//send control byte and register address byte to slave device
 	I2CMasterControl(I2C3_BASE, I2C_MASTER_CMD_SINGLE_SEND);
 
-	//wait for MCU to finish transaction
+//		//wait for MCU to finish transaction
+//		while(I2CMasterBusBusy(I2C3_BASE)){
+//
+//		}
 	while(I2CMasterBusy(I2C3_BASE));
+	int err = I2CMasterErr(I2C3_BASE);
+//	// Wait until the slave has received and acknowledged the data.
+//	uint32_t slave_status = I2CSlaveStatus(I2C3_BASE);
+//	while(!(I2CSlaveStatus(I2C3_BASE) & I2C_SLAVE_ACT_RREQ))
+//	{
+//	}
 
 
 	//specify that we are going to read from slave device
@@ -78,10 +96,20 @@ uint32_t AMSPositionEncoder::I2CReceive(uint32_t slave_addr, uint8_t reg)
 	//specified
 	I2CMasterControl(I2C3_BASE, I2C_MASTER_CMD_SINGLE_RECEIVE);
 	//wait for MCU to finish transaction
+//		while(I2CMasterBusBusy(I2C3_BASE)){
+//
+//		}
 	while(I2CMasterBusy(I2C3_BASE));
+	err = I2CMasterErr(I2C3_BASE);
 
 	//return data pulled from the specified register
-	return I2CMasterDataGet(I2C3_BASE);
+	uint32_t returnval = I2CMasterDataGet(I2C3_BASE);
+
+	while(I2CMasterBusy(I2C3_BASE))
+	{
+	}
+
+	return returnval;
 }
 
 uint32_t AMSPositionEncoder::I2CReceive2Bytes(uint32_t slave_addr, uint8_t reg)
@@ -94,34 +122,50 @@ uint32_t AMSPositionEncoder::I2CReceive2Bytes(uint32_t slave_addr, uint8_t reg)
 	I2CMasterDataPut(I2C3_BASE, reg);
 
 	//send control byte and register address byte to slave device
-	I2CMasterControl(I2C3_BASE, I2C_MASTER_CMD_BURST_SEND_START);
+	I2CMasterControl(I2C3_BASE, I2C_MASTER_CMD_SINGLE_SEND);
 
-	//wait for MCU to finish transaction
-	while (!(I2CMasterBusy(I2C3_BASE))); //Wait till end of transaction
+//		//wait for MCU to finish transaction
+//		while(I2CMasterBusBusy(I2C3_BASE)){
+//
+//		}
+	while(I2CMasterBusy(I2C3_BASE));
+	int err = I2CMasterErr(I2C3_BASE);
+//	// Wait until the slave has received and acknowledged the data.
+//	uint32_t slave_status = I2CSlaveStatus(I2C3_BASE);
+//	while(!(I2CSlaveStatus(I2C3_BASE) & I2C_SLAVE_ACT_RREQ))
+//	{
+//	}
 
-	while (I2CMasterBusy(I2C3_BASE)); //Wait till end of transaction
 
 	//specify that we are going to read from slave device
 	I2CMasterSlaveAddrSet(I2C3_BASE, slave_addr, true);
+	//send control byte and read from the register we
+	//specified
+	I2CMasterControl(I2C3_BASE, I2C_MASTER_CMD_BURST_RECEIVE_START);
+	//wait for MCU to finish transaction
+//		while(I2CMasterBusBusy(I2C3_BASE)){
+//
+//		}
+	while(I2CMasterBusy(I2C3_BASE));
+	err = I2CMasterErr(I2C3_BASE);
 
-	I2CMasterControl (I2C3_BASE, I2C_MASTER_CMD_BURST_RECEIVE_START); //Read the 1st Byte
+	//return data pulled from the specified register
 
-	while (!(I2CMasterBusy(I2C3_BASE))); //Wait till end of transaction
-
-	while (I2CMasterBusy(I2C3_BASE)); //Wait till end of transaction
 
 	unsigned char B1 = (uint8_t)(I2CMasterDataGet (I2C3_BASE)); //Read from FIFO
 
-	while (!(I2CMasterBusy(I2C3_BASE))); //Wait till end of transaction
+	while (I2CMasterBusy(I2C3_BASE)); //Wait till end of transaction
+
+	I2CMasterControl (I2C3_BASE, I2C_MASTER_CMD_BURST_RECEIVE_CONT); //Read the 2nd Byte
+
+	unsigned char B2 = (uint8_t)(I2CMasterDataGet (I2C3_BASE)); //Read from FIFO
 
 	while (I2CMasterBusy(I2C3_BASE)); //Wait till end of transaction
 
 	I2CMasterControl (I2C3_BASE, I2C_MASTER_CMD_BURST_RECEIVE_FINISH); //Read the 2nd Byte
 
-	unsigned char B2 = (uint8_t)(I2CMasterDataGet (I2C3_BASE)); //Read from FIFO
-
 	//return data pulled from the specified register
-	return (B1<<8) + B2;
+	return (B2<<8) + B1;
 }
 
 //sends an I2C command to the specified slave
