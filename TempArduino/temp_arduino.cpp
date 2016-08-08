@@ -8,6 +8,7 @@
 #include "temp_arduino.h"
 
 TempArduino::TempArduino() {
+	uartInit();
 }
 
 TempArduino::~TempArduino() {
