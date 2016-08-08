@@ -52,6 +52,7 @@ Programing Style Guide
 #include "MotorDriver/motor_driver_5015a.h"
 #include "Params/params.h"
 #include "PID/pid.h"
+#include "TempArduino/temp_arduino.h"
 
 #define DEBUG
 #define MAX_ENCODER_COUNT 16384 //0-16383

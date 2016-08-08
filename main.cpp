@@ -89,32 +89,54 @@ int main(void)
 	Params cParams;
 	PID cPID(1, 100, -100, 0.0061, 2.5, 1);
 	MotorDriver5015a cMotorDriver5015a;
+	TempArduino cTempArduino;
 
-	uint32_t current_position;
+	uint16_t current_position;
 	uint16_t target_position = 14139;
 	float speed;
 
 	while(1) {
 
-		/*** Read the current position from the encoder and udpate the params class ***/
-		current_position = cAMSPositionEncoder.getPosition();
+
+
+		/*********************************************
+		 *******USING AMS ENCODER********
+		 **********************************************/
+		//		// Read the current position from the encoder and udpate the params class
+		//		current_position = cAMSPositionEncoder.getPosition();
+		//		cParams.setCurrentPos(current_position);
+		//#ifdef DEBUG
+		//		//		UARTprintf("Current Position: %d\n",current_position);
+		//		printf("Current Position: %d\n",current_position);
+		//#endif
+		//
+		//		//	 Read the target position from the Params class
+		//		//		target_position = cParams.getTargetPos();
+		//#ifdef DEBUG
+		//		//UARTprintf("Target Position: %d\n", target_position);
+		//		printf("Target Position: %d\n", target_position);
+		//#endif
+
+		/*********************************************
+		 *******USING TEMP ARDUINO ********
+		 **********************************************/
+
+		//Read the current position
+		current_position = cTempArduino.getPositionEncoderPosition();
 		cParams.setCurrentPos(current_position);
 #ifdef DEBUG
-		//		UARTprintf("Current Position: %d\n",current_position);
-		printf("Current Position: %d\n",current_position);
+		printf("Current Postion: %d\n", current_position);
 #endif
-
-		//	/*** Read the target position from the Params class ***/
-		//		target_position = cParams.getTargetPos();
+		//Read the target position from the Params class
+		target_position = cParams.getTargetPos();
 #ifdef DEBUG
-		//UARTprintf("Target Position: %d\n", target_position);
 		printf("Target Position: %d\n", target_position);
 #endif
 
 		/*** Call PID class main function and get PWM speed as the output ***/
 		speed = cPID.calculate(target_position, current_position);
 #ifdef DEBUG
-//		UARTprintf("Speed: %d\n", (int)speed);
+		//		UARTprintf("Speed: %d\n", (int)speed);
 		printf("Speed: %d\n", (int)speed);
 #endif
 		//		speed+=5;
