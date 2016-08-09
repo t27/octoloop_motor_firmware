@@ -36,7 +36,7 @@ void TempArduino::uartInit() {
 	//
 	// Configure the UART for 115200, 8-N-1 operation.
 	//
-	UARTConfigSetExpClk(UART1_BASE, SysCtlClockGet(), 115200,
+	UARTConfigSetExpClk(UART1_BASE, SysCtlClockGet(), 1000000,
 			(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
 					UART_CONFIG_PAR_NONE));
 }
@@ -50,7 +50,7 @@ uint16_t TempArduino::getPositionEncoderPosition() {
 	UARTCharPut(UART1_BASE, 'p');
 	uint8_t LSB = UARTCharGet(UART1_BASE);
 	uint8_t MSB = UARTCharGet(UART1_BASE);
-	return ((MSB << 8)|LSB);
+	return (((MSB & 0x3F) << 8)|LSB);
 }
 
 //
@@ -61,7 +61,7 @@ uint16_t TempArduino::getLoadEncoderPosition(){
 	UARTCharPut(UART1_BASE, 'l');
 	uint8_t LSB = UARTCharGet(UART1_BASE);
 	uint8_t MSB = UARTCharGet(UART1_BASE);
-	return ((MSB << 8)|LSB);
+	return (((MSB & 0x3F) << 8)|LSB);
 }
 
 

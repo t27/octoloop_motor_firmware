@@ -47,8 +47,8 @@ double PID::calculate( double setpoint, double pv )
     // Calculate total output
 //    double output = Pout + Iout + Dout;
     double output = Pout;
-
-    // Restrict to max/min
+//    printf("output=%lf",output);
+//     Restrict to max/min
     if( output > max_ )
         output = max_;
     else if( output < min_ )

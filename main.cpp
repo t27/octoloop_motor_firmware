@@ -72,7 +72,7 @@ SimpleDelay(void)
 	//
 	// Delay cycles for 1 second
 	//
-	SysCtlDelay(80000000 / 3);
+	SysCtlDelay(80000000 / 3 ); //50ms
 }
 
 int main(void)
@@ -80,21 +80,28 @@ int main(void)
 	SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); //80 Mhz clock cycle
 #ifdef DEBUG	// Set up the serial console to use for displaying messages
 	InitConsole();
-	printf("Hello there!\n");
+//	printf("Hello: there!\n");
+	printf("Current,Target,Speed,Time\n");
 #endif
-
+	SysTickPeriodSet(80000000); // The period should be equal to the system clock time to ensure the systick values are in clock cycle units
+	SysTickEnable();
 
 	/*** Init classes, variables ***/
 	AMSPositionEncoder cAMSPositionEncoder;
 	Params cParams;
-	PID cPID(1, 100, -100, 0.0061, 2.5, 1);
+	PID cPID(0.73, 100, -100, 0.0061, 0.000455, 0.00182);//0.0031
 	MotorDriver5015a cMotorDriver5015a;
 	TempArduino cTempArduino;
 
-	uint16_t current_position;
-	uint16_t target_position = 14139;
+	uint16_t current_position=0;
+	uint16_t target_position = 9805;
+	cParams.setTargetPos(target_position);
 	float speed;
+	uint32_t prevTime = SysTickValueGet(); // clock cycles
+	uint32_t currTime;
 
+//	float speeds[] = {5.0f,15.0f,10.0f,5.0f,0.0f,10.0f};
+//	int i=0;
 	while(1) {
 
 
@@ -125,32 +132,47 @@ int main(void)
 		current_position = cTempArduino.getPositionEncoderPosition();
 		cParams.setCurrentPos(current_position);
 #ifdef DEBUG
-		printf("Current Postion: %d\n", current_position);
+		printf("%d,", current_position);
 #endif
 		//Read the target position from the Params class
 		target_position = cParams.getTargetPos();
 #ifdef DEBUG
-		printf("Target Position: %d\n", target_position);
+		printf("%d,", target_position);
 #endif
 
 		/*** Call PID class main function and get PWM speed as the output ***/
 		speed = cPID.calculate(target_position, current_position);
 #ifdef DEBUG
 		//		UARTprintf("Speed: %d\n", (int)speed);
-		printf("Speed: %d\n", (int)speed);
+		printf("%d,", (int)speed);
 #endif
-		//		speed+=5;
-		//		if (speed >100) {
-		//			speed = 1;
-		//		}
-		//	- Send the pwm speed to the motor
+//
 
-		if(speed < 0)
+//		speed =speeds[i];
+//		if(i>5)
+//			i=0;
+//		else
+//			i++;
+
+		float spd = fabsf(speed);
+		cMotorDriver5015a.setSpeed(spd);
+
+		if (speed > 0)
 			cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
 		else
 			cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
-		cMotorDriver5015a.setSpeed(fabsf(speed));
+
+
+
+		currTime = SysTickValueGet(); // clock cycles
+#ifdef DEBUG
+		printf("%d\n", currTime - prevTime);
+#endif
+		prevTime = currTime;
+		SimpleDelay();
+
 	}
+
 	return 0;
 }
 

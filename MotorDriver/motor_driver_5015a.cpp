@@ -26,7 +26,7 @@ MotorDriver5015a::MotorDriver5015a() {
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM1);  //The Tiva Launchpad has two modules (0 and 1). Module 1 covers the LED pins
 
-	//Configure PF1,PF2,PF3 Pins as PWM
+	//Configure PF1 Pins as PWM
 	GPIOPinConfigure(GPIO_PF1_M1PWM5);
 	GPIOPinTypePWM(GPIO_PORTF_BASE, GPIO_PIN_1);
 
@@ -36,13 +36,13 @@ MotorDriver5015a::MotorDriver5015a() {
 	PWMGenConfigure(PWM1_BASE, PWM_GEN_2, PWM_GEN_MODE_DOWN | PWM_GEN_MODE_NO_SYNC);
 
 	//Set the Period (expressed in clock ticks)
-	// For 1KHz(1ms Period) Clock cycle duration = 1/(16M/64[PWMdividor]) = 64/16M
-	// No of cycles for 1kHz = 0.001/clock cycle = 0.001 * 16M / 64 = 250
-	// For 80MHz clock 0.001 * 80M / 64 = 1250
+	// For 1KHz(1ms Period) Clock cycle duration = 1/(SysClk/64[PWMdividor]) = 64/SysClk
+	// No of cycles for 1kHz = 0.001/clock cycle = 0.001 * SysClk / 64 = 250, where sysclk= system speed in Hz
+	// For 80MHz sysclock, 0.001 * 80M / 64 = 1250
 	PWMGenPeriodSet(PWM1_BASE, PWM_GEN_2, PWM_PERIOD);
 
 	//Set PWM duty
-	PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, PWM_PERIOD/2);
+	PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, 0);
 
 	// Enable the PWM generator
 	PWMGenEnable(PWM1_BASE, PWM_GEN_2);
@@ -72,7 +72,8 @@ void MotorDriver5015a::setSpeed(float val) {
 		val = 100;
 	}
 	current_speed = val;
-	PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, (int)((val/PWM_INPUT_MAX) * (float)PWM_PERIOD));
+	int pwmWidth = (int)((val/PWM_INPUT_MAX) * (float)PWM_PERIOD);
+	PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, pwmWidth);
 }
 
 double MotorDriver5015a::getSpeed() {
