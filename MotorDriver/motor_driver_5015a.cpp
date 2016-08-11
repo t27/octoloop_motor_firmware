@@ -19,8 +19,6 @@ MotorDriver5015a::MotorDriver5015a() {
 	currentDirection = CLOCKWISE;
 
 	/* Initialise PWM */
-	//Configure PWM Clock divide system clock by 64
-	SysCtlPWMClockSet(SYSCTL_PWMDIV_64);
 
 	// Enable the peripherals used by this program.
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
@@ -33,12 +31,12 @@ MotorDriver5015a::MotorDriver5015a() {
 	//Configure PWM Options
 	//PWM_GEN_2 Covers M1PWM4 and M1PWM5
 	//PWM_GEN_3 Covers M1PWM6 and M1PWM7
-	PWMGenConfigure(PWM1_BASE, PWM_GEN_2, PWM_GEN_MODE_DOWN | PWM_GEN_MODE_NO_SYNC);
+	PWMGenConfigure(PWM1_BASE, PWM_GEN_2, PWM_GEN_MODE_UP_DOWN | PWM_GEN_MODE_NO_SYNC | PWM_GEN_MODE_DBG_RUN);
 
 	//Set the Period (expressed in clock ticks)
-	// For 1KHz(1ms Period) Clock cycle duration = 1/(SysClk/64[PWMdividor]) = 64/SysClk
-	// No of cycles for 1kHz = 0.001/clock cycle = 0.001 * SysClk / 64 = 250, where sysclk= system speed in Hz
-	// For 80MHz sysclock, 0.001 * 80M / 64 = 1250
+	// For 1KHz(1ms Period) Clock cycle duration = 1/(SysClk/PWMdivider) = PWMDivider/SysClk
+	// No of cycles for 1kHz = 0.001/clock cycle = 0.001 * SysClk / PWMDivider, where sysclk = system speed in Hz
+	// For 80MHz sysclock, 0.001 * 80M / 1 = 80000
 	PWMGenPeriodSet(PWM1_BASE, PWM_GEN_2, PWM_PERIOD);
 
 	//Set PWM duty
@@ -69,7 +67,7 @@ void MotorDriver5015a::setSpeed(float val) {
 	if (val < 0) {
 		val = 0;
 	} else if (val > 100) {
-		val = 100;
+		val = 99.997; // PWM_INPUT_MAX*((PWM_PERIOD-3)/PWM_PERIOD)
 	}
 	current_speed = val;
 	int pwmWidth = (int)((val/PWM_INPUT_MAX) * (float)PWM_PERIOD);

@@ -21,7 +21,7 @@
 #include "driverlib/pwm.h"
 
 
-#define PWM_PERIOD 1250 //In clock ticks
+#define PWM_PERIOD 80000 //In clock ticks
 #define PWM_INPUT_MAX 100
 
 class MotorDriver5015a: public MotorDriver {
