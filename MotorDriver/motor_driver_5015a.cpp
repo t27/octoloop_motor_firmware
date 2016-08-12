@@ -66,7 +66,7 @@ void MotorDriver5015a::setSpeed(float val) {
 	//Write 1Khz PWM and Change duty cycle
 	if (val < 0) {
 		val = 0;
-	} else if (val > 100) {
+	} else if (val >= 100) {
 		val = 99.997; // PWM_INPUT_MAX*((PWM_PERIOD-3)/PWM_PERIOD)
 	}
 	current_speed = val;
