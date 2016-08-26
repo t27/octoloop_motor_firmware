@@ -26,14 +26,29 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>driverlib.lib</name>
+			<type>1</type>
+			<locationURI>TIVAWARE_INSTALL/driverlib/ccs/Debug/driverlib.lib</locationURI>
+		</link>
+		<link>
 			<name>utils/uartstdio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/ti/TivaWare_C_Series-2.1.2.111/utils/uartstdio.c</locationURI>
+			<locationURI>TIVAWARE_INSTALL/utils/uartstdio.c</locationURI>
 		</link>
 		<link>
 			<name>utils/uartstdio.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/ti/TivaWare_C_Series-2.1.2.111/utils/uartstdio.h</locationURI>
+			<locationURI>TIVAWARE_INSTALL/utils/uartstdio.h</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>ORIGINAL_PROJECT_ROOT</name>
+			<value>file:/C:/Users/Kaustubh/Downloads/motor_firmware</value>
+		</variable>
+		<variable>
+			<name>TIVAWARE_INSTALL</name>
+			<value>file:/C:/ti/TivaWare_C_Series-2.1.3.156</value>
+		</variable>
+	</variableList>
 </projectDescription>
