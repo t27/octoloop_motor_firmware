@@ -89,26 +89,32 @@ int main(void)
 	/*** Init classes, variables ***/
 	AMSPositionEncoder cAMSPositionEncoder;
 	Params cParams;
-	PID cPID(0.73, 100, -100, 0.0061, 0.000455, 0.00182);//0.0031
+	PID cPID(0.7422, 100, -100, 0.008, 0.003, 0);//0.0031
 	MotorDriver5015a cMotorDriver5015a;
 	TempArduino cTempArduino;
 
 	uint16_t current_position=0;
-	uint16_t target_position = 9805;
+	uint16_t target_position = 0;
 	cParams.setTargetPos(target_position);
 	float speed;
 	uint32_t prevTime = SysTickValueGet(); // clock cycles
 	uint32_t currTime;
-
+	int count = 0;
 	while(1) {
-
+		count++;
+		if(count == 50) {
+			cParams.setTargetPos(7000);
+		} else if (count == 200) {
+			while(1){}
+		}
 
 
 		/*********************************************
 		 *******USING AMS ENCODER********
 		 **********************************************/
 		// Read the current position from the encoder and udpate the params class
-		current_position = cAMSPositionEncoder.getPosition();
+//		current_position = cAMSPositionEncoder.getPosition();
+		current_position = cTempArduino.getPositionEncoderPosition();
 		cParams.setCurrentPos(current_position);
 #ifdef DEBUG
 		printf("%d,",current_position);

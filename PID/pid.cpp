@@ -29,9 +29,12 @@ double PID::calculate( double setpoint, double pv )
 
     // Calculate error
     double error = setpoint - pv;
+
+    // Handling encoder rollover for 360 degree encoder
     if(error > MAX_ENCODER_COUNT/2)
     	error = error - MAX_ENCODER_COUNT;
-
+    else if(error < -(MAX_ENCODER_COUNT/2))
+    	error = error + MAX_ENCODER_COUNT;
 
     // Proportional term
     double Pout = Kp_ * error;
@@ -45,8 +48,8 @@ double PID::calculate( double setpoint, double pv )
     double Dout = Kd_ * derivative;
 
     // Calculate total output
-//    double output = Pout + Iout + Dout;
-    double output = Pout;
+    double output = Pout + Iout + Dout;
+//    double output = Pout;
 //    printf("output=%lf",output);
 //     Restrict to max/min
     if( output > max_ )
