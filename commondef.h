@@ -47,15 +47,16 @@ Programing Style Guide
 #include "driverlib/systick.h"
 
 #include "Encoder/ams_position_encoder.h"
+#include "Encoder/cui_position_encoder.h"
 #include "ForceSensor/current_force_sensor.h"
 #include "MainBus/can_bus.h"
 #include "MotorDriver/motor_driver_5015a.h"
 #include "Params/params.h"
 #include "PID/pid.h"
-#include "TempArduino/temp_arduino.h"
 
 #define DEBUG
 #define MAX_ENCODER_COUNT 16384 //0-16383
 
+volatile bool is_homing_done;
 
 #endif /* COMMONDEF_H_ */

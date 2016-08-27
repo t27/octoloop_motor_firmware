@@ -75,46 +75,59 @@ SimpleDelay(void)
 	SysCtlDelay(80000000 / 3 ); //50ms
 }
 
+void handler()
+{
+	is_homing_done = true;
+	printf("\nboom\n");
+}
+
 int main(void)
 {
 	SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); //80 Mhz clock cycle
 #ifdef DEBUG	// Set up the serial console to use for displaying messages
 	InitConsole();
-	//	printf("Hello: there!\n");
 	printf("Current,Target,Speed,Time\n");
 #endif
+
 	SysTickPeriodSet(80000000); // The period should be equal to the system clock time to ensure the systick values are in clock cycle units
 	SysTickEnable();
 
 	/*** Init classes, variables ***/
+	is_homing_done = false; //false if not done, true if done
 	AMSPositionEncoder cAMSPositionEncoder;
+	CUIPositionEncoder cCUIPositionEncoder;
 	Params cParams;
 	PID cPID(0.7422, 100, -100, 0.008, 0.003, 0);//0.0031
 	MotorDriver5015a cMotorDriver5015a;
-	TempArduino cTempArduino;
-
 	uint16_t current_position=0;
-	uint16_t target_position = 0;
-	cParams.setTargetPos(target_position);
+	uint16_t target_position;
 	float speed;
 	uint32_t prevTime = SysTickValueGet(); // clock cycles
 	uint32_t currTime;
 	int count = 0;
-	while(1) {
+	bool first_time = true;
+
+	//set CUI Encoder interrupt
+//	cCUIPositionEncoder.setIndexHandler(handler);
+	cParams.setTargetPos(0);
+	while(1) { //till count < 50, set target as 0, from 50 to 200, target position is 7000, and after that it's while(1)
 		count++;
 		if(count == 50) {
 			cParams.setTargetPos(7000);
-		} else if (count == 200) {
+		} else if (count == 2000) {
 			while(1){}
 		}
 
 
-		/*********************************************
-		 *******USING AMS ENCODER********
-		 **********************************************/
+		if(is_homing_done && first_time)
+		{
+			printf("boom\n");
+			first_time = false;
+		}
+
+
 		// Read the current position from the encoder and udpate the params class
-//		current_position = cAMSPositionEncoder.getPosition();
-		current_position = cTempArduino.getPositionEncoderPosition();
+		current_position = cCUIPositionEncoder.getPosition();
 		cParams.setCurrentPos(current_position);
 #ifdef DEBUG
 		printf("%d,",current_position);
@@ -125,46 +138,29 @@ int main(void)
 #ifdef DEBUG
 		printf("%d,", target_position);
 #endif
-
-		/*********************************************
-		 *******USING TEMP ARDUINO ********
-		 **********************************************/
-		//
-		//		//Read the current position
-		//		current_position = cTempArduino.getPositionEncoderPosition();
-		//		cParams.setCurrentPos(current_position);
-		//#ifdef DEBUG
-		//		printf("%d,", current_position);
-		//#endif
-		//		//Read the target position from the Params class
-		//		target_position = cParams.getTargetPos();
-		//#ifdef DEBUG
-		//		printf("%d,", target_position);
-		//#endif
-		//********************************
-
-
-		/*** Call PID class main function and get PWM speed as the output ***/
-		speed = cPID.calculate(target_position, current_position);
+		if (is_homing_done) {
+	/*** Call PID class main function and get PWM speed as the output ***/
+			speed = cPID.calculate(target_position, current_position);
 #ifdef DEBUG
-		printf("%d,", (int)speed);
+			printf("%d,", (int)speed);
 #endif
 
-		//		speed =speeds[i];
-		//		if(i>5)
-		//			i=0;
-		//		else
-		//			i++;
+			float spd = fabsf(speed);
+			cMotorDriver5015a.setSpeed(spd);
 
-		float spd = fabsf(speed);
-		cMotorDriver5015a.setSpeed(spd);
+			if (speed > 0)
+				cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
+			else
+				cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
 
-		if (speed > 0)
+		} else {
 			cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
-		else
-			cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
+			cMotorDriver5015a.setSpeed(10.0);
+		}
+
 
 		currTime = SysTickValueGet(); // clock cycles
+
 #ifdef DEBUG
 		printf("%d\n", currTime - prevTime);
 #endif
