@@ -86,7 +86,7 @@ int main(void)
 	SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); //80 Mhz clock cycle
 #ifdef DEBUG	// Set up the serial console to use for displaying messages
 	InitConsole();
-	printf("Current,Target,Speed,Time\n");
+	UARTprintf("Current,Target,Speed,Time\n");
 #endif
 
 	SysTickPeriodSet(80000000); // The period should be equal to the system clock time to ensure the systick values are in clock cycle units
@@ -97,7 +97,7 @@ int main(void)
 	AMSPositionEncoder cAMSPositionEncoder;
 	CUIPositionEncoder cCUIPositionEncoder;
 	Params cParams;
-	PID cPID(0.7422, 100, -100, 0.008, 0.003, 0);//0.0031
+	PID cPID(0.7422, 100, -100, 0.003, 0, 0);//0.0031
 	MotorDriver5015a cMotorDriver5015a;
 	uint16_t current_position=0;
 	uint16_t target_position;
@@ -105,66 +105,59 @@ int main(void)
 	uint32_t prevTime = SysTickValueGet(); // clock cycles
 	uint32_t currTime;
 	int count = 0;
-	bool first_time = true;
+
 
 	//set CUI Encoder interrupt
 //	cCUIPositionEncoder.setIndexHandler(handler);
-	cParams.setTargetPos(0);
+	cParams.setTargetPos(8000);
+//	cMotorDriver5015a.setSpeed(50);
 	while(1) { //till count < 50, set target as 0, from 50 to 200, target position is 7000, and after that it's while(1)
-		count++;
-		if(count == 50) {
-			cParams.setTargetPos(7000);
-		} else if (count == 2000) {
-			while(1){}
-		}
-
-
-		if(is_homing_done && first_time)
-		{
-			printf("boom\n");
-			first_time = false;
-		}
-
-
-		// Read the current position from the encoder and udpate the params class
-		current_position = cCUIPositionEncoder.getPosition();
-		cParams.setCurrentPos(current_position);
-#ifdef DEBUG
-		printf("%d,",current_position);
-#endif
-
-		//	 Read the target position from the Params class
-		target_position = cParams.getTargetPos();
-#ifdef DEBUG
-		printf("%d,", target_position);
-#endif
+//		count++;
+//		if (count == 2000) {
+//			while(1){}
+//		}
+//		if(is_homing_done) {
+//			cMotorDriver5015a.setSpeed(0);
+//			while(1){}
+//		}
 		if (is_homing_done) {
+			// 	Read the current position from the encoder and udpate the params class
+			current_position = cCUIPositionEncoder.getPosition();
+			cParams.setCurrentPos(current_position);
+#ifdef DEBUG
+			UARTprintf("%d\n",current_position);
+#endif
+			//	 Read the target position from the Params class
+			target_position = cParams.getTargetPos();
+#ifdef DEBUG
+//			printf("%d,", target_position);
+#endif
+
 	/*** Call PID class main function and get PWM speed as the output ***/
 			speed = cPID.calculate(target_position, current_position);
 #ifdef DEBUG
-			printf("%d,", (int)speed);
+//			printf("%d,", (int)speed);
 #endif
 
 			float spd = fabsf(speed);
 			cMotorDriver5015a.setSpeed(spd);
 
-			if (speed > 0)
+			if (speed < 0)
 				cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
 			else
 				cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
+			currTime = SysTickValueGet(); // clock cycles
 
+#ifdef DEBUG
+//			printf("%d\n", currTime - prevTime);
+#endif
+			prevTime = currTime;
 		} else {
 			cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
 			cMotorDriver5015a.setSpeed(10.0);
 		}
 
 
-		currTime = SysTickValueGet(); // clock cycles
-
-#ifdef DEBUG
-		printf("%d\n", currTime - prevTime);
-#endif
-		prevTime = currTime;
 	}
 
 	return 0;

@@ -73,8 +73,8 @@ void CUIPositionEncoder::setPosition(uint32_t position){
 
 
 void indexInterrupt(){
-	QEIIntClear(QEI0_BASE, QEI_INTINDEX);
 	is_homing_done = true;
+	QEIIntClear(QEI0_BASE, QEI_INTINDEX);
 	QEIIntDisable(QEI0_BASE, QEI_INTINDEX);
 }
 
