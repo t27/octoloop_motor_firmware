@@ -117,7 +117,7 @@ int main(void)
 	CUIPositionEncoder cCUIPositionEncoder;
 	Params cParams;
 	//	PID cPID(1, 100, -100, 0.01, 0.0085, 0.000003);//0.0031
-	PID cPID(60, 100, -100, 0.01, 10, 0);
+	PID cPID(60, 100, -100, 0.015, 10, 0);
 	MotorDriver5015a cMotorDriver5015a;
 	uint16_t current_position=0;
 	uint16_t target_position;
@@ -127,7 +127,6 @@ int main(void)
 	uint64_t count = 0;
 //	bool first_time = true;
 	cParams.setTargetPos(8000);
-	cMotorDriver5015a.setSpeed(100);
 //	int target = 8000;
 	while(1) {
 //		if (count % 20000 == 0) {
@@ -183,7 +182,7 @@ int main(void)
 
 		} else {
 			cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
-			cMotorDriver5015a.setSpeed(5.0);
+			cMotorDriver5015a.setSpeed(10.0);
 		}
 
 
