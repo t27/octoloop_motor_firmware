@@ -44,11 +44,11 @@
 	<variableList>
 		<variable>
 			<name>ORIGINAL_PROJECT_ROOT</name>
-			<value>file:/C:/Users/Kaustubh/Downloads/motor_firmware</value>
+			<value>file:/C:/Users/Tarang/workspace_v6_1/MotorFirmware</value>
 		</variable>
 		<variable>
 			<name>TIVAWARE_INSTALL</name>
-			<value>file:/C:/ti/TivaWare_C_Series-2.1.3.156</value>
+			<value>file:/C:/ti/TivaWare_C_Series-2.1.2.111</value>
 		</variable>
 	</variableList>
 </projectDescription>

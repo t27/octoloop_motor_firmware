@@ -42,9 +42,16 @@ double PID::calculate( double setpoint, double pv )
     // Integral term
     integral_ += error * dt_;
     double Iout = Ki_ * integral_;
+    if( Iout > max_ )
+		Iout = max_;
+	else if( Iout < min_ )
+		Iout = min_;
 
     // Derivative term
     double derivative = (error - pre_error_) / dt_;
+    if (derivative > 4000 || derivative < -4000) {
+    	derivative = 0;
+    }
     double Dout = Kd_ * derivative;
 
     // Calculate total output

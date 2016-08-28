@@ -71,11 +71,11 @@ void MotorDriver5015a::setSpeed(float val) {
 	}
 	current_speed = val;
 	int pwmWidth = (int)((val/PWM_INPUT_MAX) * (float)PWM_PERIOD);
-	if (pwmWidth == 0) {
-		emergencyBrake();
-	} else {
-		brakeRelease();
-	}
+//	if (pwmWidth == 0) {
+//		emergencyBrake();
+//	} else {
+//		brakeRelease();
+//	}
 	PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, pwmWidth);
 }
 

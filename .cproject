@@ -4,7 +4,7 @@
 		<cconfiguration id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.903231617">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.903231617" moduleId="org.eclipse.cdt.core.settings" name="Debug">
 				<macros>
-					<stringMacro name="TIVAWARE_INSTALL" type="VALUE_PATH_ANY" value="C:/ti/TivaWare_C_Series-2.1.3.156"/>
+					<stringMacro name="TIVAWARE_INSTALL" type="VALUE_PATH_ANY" value="C:\ti\TivaWare_C_Series-2.1.2.111"/>
 				</macros>
 				<externalSettings/>
 				<extensions>
