@@ -19,7 +19,7 @@ class PID
         // dt -  loop interval time
         // max - maximum value of manipulated variable
         // min - minimum value of manipulated variable
-        PID( double dt, double max, double min, double Kp, double Kd, double Ki );
+        PID( double period, double max, double min, double Kp, double Kd, double Ki );
 
         // Returns the manipulated variable given a setpoint and current process value
         double calculate( double setpoint, double pv );
@@ -34,6 +34,8 @@ class PID
         double Ki_;
         double pre_error_;
         double integral_;
+        double period_;
+        uint64_t prev_time_;
 };
 
 

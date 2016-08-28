@@ -22,7 +22,6 @@ void InitConsole(void) // Debug logging
 
 volatile bool g_bErrFlag = 0;
 volatile uint32_t g_ui32MsgCount = 0;
-
 void canHandler(void) {
 	uint32_t ui32Status;
 	// Read the CAN interrupt status to find the cause of the interrupt
@@ -72,7 +71,7 @@ SimpleDelay(void)
 	//
 	// Delay cycles for 1 second
 	//
-	SysCtlDelay(80000000 / 3 ); //50ms
+	SysCtlDelay(F_CPU/ 3 ); //50ms
 }
 
 void handler()
@@ -81,76 +80,107 @@ void handler()
 	printf("\nboom\n");
 }
 
+void SysTickInt(void) {
+	// called every 1 us
+	TIME_MICROS ++;
+}
+
+void startTimer() {
+	TIME_MICROS = 0;
+	SysTickPeriodSet(F_CPU/1000000);// for microseconds, F_CPU/1000 for millis
+	SysTickIntRegister(SysTickInt);
+	SysTickIntEnable();
+	SysTickEnable();
+}
+
+
+
 int main(void)
 {
+
 	SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); //80 Mhz clock cycle
+
 #ifdef DEBUG	// Set up the serial console to use for displaying messages
 	InitConsole();
-	printf("Current,Target,Speed,Time\n");
 #endif
 
-	SysTickPeriodSet(80000000); // The period should be equal to the system clock time to ensure the systick values are in clock cycle units
-	SysTickEnable();
+	startTimer();
+
+#ifdef DEBUG
+//	printf("Current,Target,Speed,Time\n");
+	printf("Current\n");
+#endif
 
 	/*** Init classes, variables ***/
 	is_homing_done = false; //false if not done, true if done
 	AMSPositionEncoder cAMSPositionEncoder;
 	CUIPositionEncoder cCUIPositionEncoder;
 	Params cParams;
-//	PID cPID(1, 100, -100, 0.01, 0.0085, 0.000003);//0.0031
-	PID cPID(1, 100, -100, 0.013, 0.02, 0);
+	//	PID cPID(1, 100, -100, 0.01, 0.0085, 0.000003);//0.0031
+	PID cPID(60, 100, -100, 0.01, 10, 0);
 	MotorDriver5015a cMotorDriver5015a;
 	uint16_t current_position=0;
 	uint16_t target_position;
 	float speed;
-	uint32_t prevTime = SysTickValueGet(); // clock cycles
-	uint32_t currTime;
-
+	uint64_t prevTime = TIME_MICROS; // clock cycles
+//	uint64_t currTime;
+	uint64_t count = 0;
+//	bool first_time = true;
 	cParams.setTargetPos(8000);
-	while(1) { //till count < 50, set target as 0, from 50 to 200, target position is 7000, and after that it's while(1)
-//
-//		if (is_homing_done && first_time) {
-//			cMotorDriver5015a.setSpeed(0);
-//  		while(1){}
-//		}
-		if (is_homing_done) {
-//			cMotorDriver5015a.brakeRelease();
-//			count++;
-//			if (count == 2000) {
-//				while(1){}
+	cMotorDriver5015a.setSpeed(100);
+//	int target = 8000;
+	while(1) {
+//		if (count % 20000 == 0) {
+//			cParams.setTargetPos(target);
+//			target+=4000;
+//			if (target >= 16384) {
+//				target = 0;
 //			}
+////			printf("\nTime=%llu\n", TIME_MICROS - prevTime);
+////			while(1){}
+//		}
 
-			// 	Read the current position from the encoder and udpate the params class
+//		if(is_homing_done && first_time) {
+//			first_time = false;
+//			prevTime = TIME_MICROS;
+//		}
+
+		if (is_homing_done) {
+			count++;
+			// Read the current position from the encoder and udpate the params class
 			current_position = cCUIPositionEncoder.getPosition();
 			cParams.setCurrentPos(current_position);
 #ifdef DEBUG
-			printf("%d\n",current_position);
+//			printf("%d\n",current_position);
 #endif
 			//	 Read the target position from the Params class
 			target_position = cParams.getTargetPos();
-#ifdef DEBUG
+//#ifdef DEBUG
 //			printf("%d,", target_position);
-#endif
+//#endif
 
-	/*** Call PID class main function and get PWM speed as the output ***/
+			/*** Call PID class main function and get PWM speed as the output ***/
 			speed = cPID.calculate(target_position, current_position);
-#ifdef DEBUG
-//			printf("%d\n", (int)speed);
-#endif
+//#ifdef DEBUG
+//			printf("%d,", (int)speed);
+//#endif
+			if (speed <= 100 && speed >= -100) { // Speed can be greater than +/-100 if PID fails due to sample time issues
 
-			float spd = fabsf(speed);
-			cMotorDriver5015a.setSpeed(spd);
+				float spd = fabsf(speed);
+				cMotorDriver5015a.setSpeed(spd);
 
-			if (speed < 0)
-				cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
-			else
-				cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
-			currTime = SysTickValueGet(); // clock cycles
+				if (speed < 0)
+					cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
+				else
+					cMotorDriver5015a.setDirection(MotorDriver5015a::ANTICLOCKWISE);
 
-#ifdef DEBUG
-//			printf("%d\n", currTime - prevTime);
-#endif
-			prevTime = currTime;
+//				currTime = TIME_MICROS;
+//#ifdef DEBUG
+//			    printf("%llu\n", currTime - prevTime);
+//#endif
+//				prevTime = currTime;
+			}
+
 		} else {
 			cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);
 			cMotorDriver5015a.setSpeed(5.0);
