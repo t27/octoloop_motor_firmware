@@ -43,9 +43,9 @@ double PID::calculate( double setpoint, double pv )
 			error = error + MAX_ENCODER_COUNT;
 
 		// Error tolerance
-//		if (error < 2 && error > -2) {
-//			error = 0;
-//		}
+		if (error < 2 && error > -2) {
+			error = 0;
+		}
 		// Proportional term
 		double Pout = Kp_ * error;
 
@@ -79,7 +79,7 @@ double PID::calculate( double setpoint, double pv )
 		prev_time_ = curr_time;
 		return output;
 	} else {
-		return -1000;
+		return -1000.0;
 	}
 
 }
