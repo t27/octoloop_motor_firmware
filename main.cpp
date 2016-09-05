@@ -2,6 +2,7 @@
  * main.c
  */
 #include "commondef.h"
+#include "common_funcs.h"
 
 void InitConsole(void) // Debug logging
 {
@@ -20,58 +21,13 @@ void InitConsole(void) // Debug logging
 	UARTStdioConfig(0, 115200, 16000000);
 }
 
-volatile bool g_bErrFlag = 0;
-volatile uint32_t g_ui32MsgCount = 0;
-void canHandler(void) {
-	uint32_t ui32Status;
-	// Read the CAN interrupt status to find the cause of the interrupt
-	ui32Status = CANIntStatus(CAN0_BASE, CAN_INT_STS_CAUSE);
-	// If the cause is a controller status interrupt, then get the status
-	if(ui32Status == CAN_INT_INTID_STATUS)
-	{
-		// Read the controller status.  This will return a field of status
-		// error bits that can indicate various errors.  Error processing
-		// is not done in this example for simplicity.  Refer to the
-		// API documentation for details about the error status bits.
-		// The act of reading this status will clear the interrupt.  If the
-		// CAN peripheral is not connected to a CAN bus with other CAN devices
-		// present, then errors will occur and will be indicated in the
-		// controller status.
-		ui32Status = CANStatusGet(CAN0_BASE, CAN_STS_CONTROL);
-
-		// Set a flag to indicate some errors may have occurred.
-		g_bErrFlag = 1;
-	}
-	// Check if the cause is message object 1, which what we are using for
-	// sending messages.
-	else if(ui32Status == 1)
-	{
-		// Getting to this point means that the TX interrupt occurred on
-		// message object 1, and the message TX is complete.  Clear the
-		// message object interrupt.
-		CANIntClear(CAN0_BASE, 1);
-		// Increment a counter to keep track of how many messages have been
-		// sent.  In a real application this could be used to set flags to
-		// indicate when a message is sent.
-		g_ui32MsgCount++;
-
-		// Since the message was sent, clear any error flags.
-		g_bErrFlag = 0;
-	}
-	// Otherwise, something unexpected caused the interrupt.  This should
-	// never happen.
-	else
-	{
-		// Spurious interrupt handling can go here.
-	}
-}
 void
 SimpleDelay(void)
 {
 	//
 	// Delay cycles for 1 second
 	//
-	SysCtlDelay(F_CPU/ 3 ); //50ms
+	SysCtlDelay(F_CPU/ 30 );
 }
 
 void handler()
@@ -93,6 +49,11 @@ void startTimer() {
 	SysTickEnable();
 }
 
+/*
+ * Externed Definitions
+ */
+Rs485Bus cRs485Bus;
+
 
 
 int main(void)
@@ -101,21 +62,22 @@ int main(void)
 	SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); //80 Mhz clock cycle
 
 #ifdef DEBUG	// Set up the serial console to use for displaying messages
-	InitConsole();
+//	InitConsole();
 #endif
 
-	startTimer();
+//	startTimer();
 
 #ifdef DEBUG
 //	printf("Current,Target,Speed,Time\n");
-	printf("Current\n");
+//	printf("Current\n");
 #endif
+
+	cRs485Bus.registerInterrupt(UARTInterruptHandler);
 
 	/*** Init classes, variables ***/
 	is_homing_done = false; //false if not done, true if done
 //	AMSPositionEncoder cAMSPositionEncoder;
 	CUIPositionEncoder cCUIPositionEncoder;
-	Params cParams;
 	//	PID cPID(1, 100, -100, 0.01, 0.0085, 0.000003);//0.0031
 //	PID cPID(50000, 100, -100, 0.014, 0.045, 0);//0.007,d=2.9 @50
 //	PID cPID(50000, 100, -100, 0.015, 0.058, 0.00003);//0.007,d=2.9 @50
@@ -147,7 +109,7 @@ int main(void)
 			prevTime = TIME_MICROS;
 		}
 
-		if (is_homing_done) {
+		if (is_homing_done || true) {
 
 			// Read the current position from the encoder and udpate the params class
 			current_position = cCUIPositionEncoder.getPosition();
@@ -161,7 +123,10 @@ int main(void)
 //			printf("%d,", target_position);
 //#endif
 
-			/*** Call PID class main function and get PWM speed as the output ***/
+			// Disable interrupts
+			IntMasterDisable();
+
+			// Call PID class main function and get PWM speed as the output
 			speed = cPID.calculate(target_position, current_position);
 //#ifdef DEBUG
 //			printf("%d,", (int)speed);
@@ -182,6 +147,10 @@ int main(void)
 //#endif
 //				prevTime = currTime;
 			}
+
+			// Enable Interrupts
+			IntMasterEnable();
+			SimpleDelay();
 
 		} else {
 			cMotorDriver5015a.setDirection(MotorDriver5015a::CLOCKWISE);

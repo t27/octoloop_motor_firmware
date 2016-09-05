@@ -39,17 +39,28 @@ Programing Style Guide
 #include <math.h>
 
 #include "inc/hw_uart.h"
+#include "inc/hw_gpio.h"
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "inc/hw_ints.h"
+
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"
+#include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
-#include "utils/uartstdio.h"
+#include "driverlib/gpio.h"
+#include "driverlib/eeprom.h"
+#include "driverlib/interrupt.h"
 #include "driverlib/systick.h"
+
+#include "utils/uartstdio.h"
 
 #include "Encoder/ams_position_encoder.h"
 #include "Encoder/cui_position_encoder.h"
 #include "ForceSensor/current_force_sensor.h"
 #include "MainBus/can_bus.h"
+#include "MainBus/rs485_bus.h"
 #include "MotorDriver/motor_driver_5015a.h"
 #include "Params/params.h"
 #include "PID/pid.h"
@@ -60,5 +71,10 @@ Programing Style Guide
 
 volatile bool is_homing_done;
 volatile uint64_t TIME_MICROS;
+volatile Params cParams;
+
+extern Rs485Bus cRs485Bus;
+
+
 
 #endif /* COMMONDEF_H_ */

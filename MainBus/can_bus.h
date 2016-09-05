@@ -18,17 +18,18 @@
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
+#include "a_main_bus.h"
 
-class CanBus {
+class CanBus: public MainBus {
 public:
 	CanBus();
 	virtual ~CanBus();
 	void registerInterrupt(void (*handler)());
 	void enableCAN();
-	void sendData(unsigned int *message);
-
+	void sendData(uint8_t *packet, uint8_t length);
+	void getData(uint8_t *packet, uint8_t length);
 private:
-	void initCAN();
+	void initialise();
 };
 
 #endif /* HALCLASSES_MAINBUS_CANBUS_H_ */

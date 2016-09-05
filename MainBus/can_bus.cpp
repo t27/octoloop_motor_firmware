@@ -8,7 +8,7 @@
 #include "can_bus.h"
 
 CanBus::CanBus() {
-	initCAN();
+	initialise();
 
 }
 
@@ -16,7 +16,7 @@ CanBus::~CanBus() {
 	// TODO Auto-generated destructor stub
 }
 
-void CanBus::initCAN() {
+void CanBus::initialise() {
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
 	GPIOPinConfigure(GPIO_PE4_CAN0RX);
 	GPIOPinConfigure(GPIO_PE5_CAN0TX);
@@ -36,20 +36,23 @@ void CanBus::enableCAN() {
 	CANEnable(CAN0_BASE);
 }
 
-void CanBus:: sendData(unsigned int *message) {
+void CanBus:: sendData(uint8_t *packet, uint8_t length) {
 	//can message object
 	tCANMsgObject msg; // the CAN message object
 //	unsigned int msgData; // the message data is four bytes long which we can allocate as an int32
-	uint8_t *msgDataPtr = (uint8_t *)message; // make a pointer to msgData so we can access individual bytes
+	uint8_t *msgDataPtr = packet; // make a pointer to msgData so we can access individual bytes
 
 	//setup message object
 	msg.ui32MsgID = 1;
 	msg.ui32MsgIDMask = 0;
 	msg.ui32Flags = MSG_OBJ_TX_INT_ENABLE;
-	msg.ui32MsgLen = sizeof(msgDataPtr);
+	msg.ui32MsgLen = sizeof(msgDataPtr) * length;
 	msg.pui8MsgData = msgDataPtr;
 
 
     CANMessageSet(CAN0_BASE, 1, &msg, MSG_OBJ_TYPE_TX);
 }
 
+void CanBus::getData(uint8_t *packet, uint8_t length) {
+//	return 0xFF;
+}
